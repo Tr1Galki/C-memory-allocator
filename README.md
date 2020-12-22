@@ -182,3 +182,5 @@ capacity_from_size( block_size sz ) {
 
 - Ulrich Drepper. ["What every programmer should know about memory"](https://people.freebsd.org/~lstewart/articles/cpumemory.pdf)
 - [`man mmap` online](https://man7.org/linux/man-pages/man2/mmap.2.html)
+- [Статья Doug Lea о том, как работает аллокатор в `glibc`](http://gee.cs.oswego.edu/dl/html/malloc.html). Текущая версия аллокатора работает по более сложному алгоритму. 
+- [Исходный код одной из последних версий аллокатора в `glibc`. Очень много хорошо написанных комментариев](docs/malloc-impl.c)
