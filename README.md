@@ -6,7 +6,7 @@
 # Подготовка 
 
 - Прочитайте про [автоматические переменные](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html) в `Makefile`
-- Прочитайте главу 13 (целиком) "Low-level programming: C, assembly and program execution". 
+- Прочитайте главу 12 (стр. 235-239), главу 13 (целиком) "Low-level programming: C, assembly and program execution". 
 - Виртуальная память
   - Освежите ваши знания о виртуальной памяти и её организации (глава 4 "Low-level programming: C, assembly and program execution").
   - Вспомните, что такое файловые дескрипторы. С ними работают системные вызовы `open`, `close`, `write` и другие.
@@ -14,6 +14,7 @@
 - Возможности языка. Удостоверьтесь, что вы знаете о том, как работают:
    - ключевые слова `inline` (стр. 280 в учебнике) и `restrict` (стр. 281 в учебнике).
    - Flexible array members (стр. 209 в учебнике).
+   - Макрос `offsetof` и особенно [эта страница](https://p99.gforge.inria.fr/p99-html/group__flexible.html).
    - использование структур для создания новых псевдонимов типов (как просто `typedef`) но без неявного преобразования (см. [урок на Stepik](https://stepik.org/lesson/408350/step/15)).
  
 На защите мы можем обсуждать любые вопросы по этим материалам.
@@ -86,21 +87,20 @@ typedef struct { size_t bytes; } block_capacity;
 typedef struct { size_t bytes; } block_size;
 ```
 
-Размер блока всегда на `sizeof(struct block_header)` больше, чем его вместимость.
+Размер блока всегда на `offsetof(struct block_header, contents)` больше, чем его вместимость.
 
 ```c
 /* mem_internals.h */
-inline block_size 
-size_from_capacity( block_capacity cap ) {
-   return (block_size) {cap.bytes + sizeof( struct block_header ) }; 
+inline block_size size_from_capacity( block_capacity cap ) { 
+   return (block_size) {cap.bytes + offsetof( struct block_header, contents ) }; 
 }
-inline block_capacity 
-capacity_from_size( block_size sz ) { 
-   return (block_capacity) { sz.bytes - sizeof( struct block_header ) }; 
+inline block_capacity capacity_from_size( block_size sz ) { 
+   return (block_capacity) {sz.bytes - offsetof( struct block_header, contents ) }; 
 }
 ```
 
-В заголовке хранится вместимость блока, а не его суммарный размер вместе с заголовком.
+- В заголовке хранится вместимость блока, а не его суммарный размер вместе с заголовком.
+- Нельзя использовать `sizeof( struct block_header )`, т.к. из-за выравнивания размер структуры будет больше. На машине автора, например, размер структуры был равен 24, а `offsetof( struct block_header, contents ) == 17`, что правильно.
 
 ## Алгоритм `malloc(n)`
 
