@@ -1,6 +1,6 @@
-# Assignment #7: Memory allocator
+# Assignment: Memory allocator
 ---
-Лабораторная работа №7: аллокатор памяти
+Лабораторная работа: аллокатор памяти
 
 
 # Подготовка 
