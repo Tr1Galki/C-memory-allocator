@@ -122,9 +122,13 @@ void* _malloc( size_t query ) {
   else return NULL;
 }
 
+static struct block_header* block_get_header(void* contents) {
+  return (struct block_header*) (((uint8_t*)contents)-offsetof(struct block_header, contents));
+}
+
 void _free( void* mem ) {
   if (!mem) return ;
-  struct block_header* header = (struct block_header*)mem-1;
+  struct block_header* header = block_get_header( mem );
   header->is_free = true;
   /*  ??? */
 }
