@@ -87,12 +87,6 @@ DEFINE_MMAP_IMPL(pessimistic_case) {
     base_mmap_checks(addr, length, prot, flags, fd, offset);
 
     ++test_pessimistic_case_mmap_counter;
-    if (test_pessimistic_case_mmap_counter == 1) {
-        return MAP_FAILED;
-    } else {
-        return MAP_FAILED;
-    }
-
     return MAP_FAILED;
 }
 
