@@ -22,7 +22,7 @@ TEST_HEADERS=$(shell find $(TESTSDIR) -type f -name '*.h' 2>/dev/null) $(COMMON_
 COMMON_OBJECTS=$(patsubst %.c,$(BUILDDIR)/%.o,$(COMMON_SOURCES))
 TEST_OBJECTS=$(patsubst %.c,$(BUILDDIR)/%.o,$(TEST_SOURCES))
 TARGETS=$(patsubst $(BUILDDIR)/%.o,$(TARGETDIR)/%,$(TEST_OBJECTS))
-TESTS=$(patsubst $(TARGETDIR)/%,test_%,$(TARGETS))
+TESTS=$(patsubst $(TARGETDIR)/$(TESTSDIR)/%,test_%,$(TARGETS))
 
 .PHONY: all test $(TESTS)
 .SILENT: test list $(TESTS)
@@ -38,7 +38,7 @@ list:
 test: $(TESTS)
 	echo 'All tests passed successful!'
 
-$(TESTS): test_% : $(TARGETDIR)/%
+$(TESTS): test_% : $(TARGETDIR)/$(TESTSDIR)/%
 	echo "Running test $(patsubst test_%,\"%\",$@)..."
 	./$< || (echo 'Test failed' && false)
 	echo 'Test passed successful!'
