@@ -11,6 +11,6 @@ linter:
     - /run-checks.sh
 
 test:
-  stage: test 
+  stage: test
   script:
     - cd tester; make CC=clang
