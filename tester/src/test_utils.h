@@ -37,7 +37,7 @@ inline void run_test_group(const char * name, const test_in_group * tests, size_
     printf("Run test group \"%s\":\n", name);
 
     for (size_t i = 0; i < amount; ++i) {
-        printf("Run test \"%s\"...\n", tests[i].name);
+        printf("%zu. Run test \"%s\"...\n", i + 1, tests[i].name);
         tests[i].test();
     }
 }
