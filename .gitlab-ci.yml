@@ -7,7 +7,7 @@ stages:
 linter:
   stage: check
   script:
-    - cd solution ; echo "Running linter" ; cat /run-checks.sh
+    - echo "Running linter" ; cat /run-checks.sh
     - /run-checks.sh
 
 test:
