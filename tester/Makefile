@@ -39,9 +39,9 @@ test: $(TESTS)
 	echo 'All tests passed successful!'
 
 $(TESTS): test_% : $(TARGETDIR)/$(TESTSDIR)/%
-	echo "Running test $(patsubst test_%,\"%\",$@)..."
-	./$< || (echo 'Test failed' && false)
-	echo 'Test passed successful!'
+	echo "Running test set $(patsubst test_%,\"%\",$@)..."
+	./$< || (echo 'Test set failed' && false)
+	echo 'Test set passed successful!'
 
 $(TARGETS): $(TARGETDIR)/% : $(BUILDDIR)/%.o $(COMMON_OBJECTS)
 	@mkdir -p $(@D)

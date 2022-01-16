@@ -4,19 +4,19 @@
 extern inline void run_test_group(const char * name, const test_in_group * tests, size_t amount);
 extern inline void base_mmap_checks(void * addr, size_t length, int prot, int flags, int fd, off_t offset);
 
-void print_mmap_call(void * addr, size_t length, int prot, int flags, int fd, off_t offset) {
-    fputs("mmap(addr = ", stdout);
+void print_mmap_call(FILE * output, void * addr, size_t length, int prot, int flags, int fd, off_t offset) {
+    fputs("mmap(addr = ", output);
 
     if (addr) {
-        printf("%p", addr);
+        fprintf(output, "%p", addr);
     } else {
-        fputs("NULL", stdout);
+        fputs("NULL", output);
     }
 
-    printf(", length = %zu, prot = ", length);
+    fprintf(output, ", length = %zu, prot = ", length);
 
     if (prot == PROT_NONE) {
-        fputs("PROT_NONE", stdout);
+        fputs("PROT_NONE", output);
     } else {
         int amount = 0;
 
@@ -33,7 +33,7 @@ void print_mmap_call(void * addr, size_t length, int prot, int flags, int fd, of
             }
 
             if (i > 0) {
-                fputs(" | ", stdout);
+                fputs(" | ", output);
             }
 
             const char * prot_str = NULL;
@@ -51,14 +51,14 @@ void print_mmap_call(void * addr, size_t length, int prot, int flags, int fd, of
                 break;
             }
 
-            printf("%s", prot_str);
+            fprintf(output, "%s", prot_str);
         }
     }
 
-    fputs(", flags =", stdout);
+    fputs(", flags =", output);
 
     if (flags == 0) {
-        fputs("0", stdout);
+        fputs("0", output);
     } else {
         int amount = 0;
 
@@ -75,7 +75,7 @@ void print_mmap_call(void * addr, size_t length, int prot, int flags, int fd, of
             }
 
             if (i > 0) {
-                fputs(" |", stdout);
+                fputs(" |", output);
             }
 
             const char * flags_str = NULL;
@@ -149,19 +149,19 @@ void print_mmap_call(void * addr, size_t length, int prot, int flags, int fd, of
                 break;
             }
 
-            printf(" %s", flags_str);
+            fprintf(output, " %s", flags_str);
         }
     }
 
-    printf(", fd = %d, offset = %zu) -> ...\n", fd, offset);
+    fprintf(output, ", fd = %d, offset = %zu) -> ...\n", fd, offset);
 }
 
-void print_mmap_result(void * retval) {
+void print_mmap_result(FILE * output, void * retval) {
     if (retval == MAP_FAILED) {
-        puts("mmap(...) -> MAP_FAILED");
+        fputs("mmap(...) -> MAP_FAILED\n", output);
     } else if (retval) {
-        printf("mmap(...) -> %p\n", retval);
+        fprintf(output, "mmap(...) -> %p\n", retval);
     } else {
-        puts("mmap(...) -> NULL");
+        fputs("mmap(...) -> NULL\n", output);
     }
 }

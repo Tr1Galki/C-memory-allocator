@@ -12,7 +12,7 @@
 #define DEFINE_TEST_GROUP(_name) static const test_in_group tests_##_name[] =
 
 #define RUN_SINGLE_TEST(_name) do { \
-    puts("Run test \"" #_name "\"..."); \
+    puts(" Run test \"" #_name "\"..."); \
     test_##_name(); \
 } while (0)
 
@@ -34,10 +34,10 @@ typedef struct {
 } test_in_group;
 
 inline void run_test_group(const char * name, const test_in_group * tests, size_t amount) {
-    printf("Run test group \"%s\":\n", name);
+    printf(" Run test group \"%s\":\n", name);
 
     for (size_t i = 0; i < amount; ++i) {
-        printf("%zu. Run test \"%s\"...\n", i + 1, tests[i].name);
+        printf("  %zu. Run test \"%s\"...\n", i + 1, tests[i].name);
         tests[i].test();
     }
 }
@@ -55,8 +55,8 @@ inline void base_mmap_checks(void * addr, size_t length, int prot, int flags, in
     assert(offset == 0);
 }
 
-void print_mmap_call(void * addr, size_t length, int prot, int flags, int fd, off_t offset);
-void print_mmap_result(void * retval);
+void print_mmap_call(FILE * output, void * addr, size_t length, int prot, int flags, int fd, off_t offset);
+void print_mmap_result(FILE * output, void * retval);
 
 
 #ifdef TEST_SMART_MMAP
@@ -72,7 +72,7 @@ static mmap_impl_t current_mmap_impl = NULL;
 static inline void * _mmap(void * addr, size_t length, int prot, int flags, int fd, off_t offset) {
     void * result = NULL;
 
-    print_mmap_call(addr, length, prot, flags, fd, offset);
+    print_mmap_call(stderr, addr, length, prot, flags, fd, offset);
 
     if (current_mmap_impl) {
         result = current_mmap_impl(addr, length, prot, flags, fd, offset);
@@ -80,7 +80,7 @@ static inline void * _mmap(void * addr, size_t length, int prot, int flags, int 
         result = MAP_FAILED;
     }
 
-    print_mmap_result(result);
+    print_mmap_result(stderr, result);
     return result;
 }
 #endif

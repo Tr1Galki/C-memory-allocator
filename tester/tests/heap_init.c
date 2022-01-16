@@ -24,7 +24,7 @@ DEFINE_TEST(fail) {
         test_length = corner_cases[i];
         mmap_counter = 0;
 
-        printf("heap_init(%zu)\n", test_length);
+        fprintf(stderr, "heap_init(%zu)\n", test_length);
 
         assert(heap_init(test_length) == NULL);
         assert(mmap_counter == 2);
@@ -48,7 +48,7 @@ DEFINE_TEST(success) {
         test_length = corner_cases[i];
         mmap_counter = 0;
 
-        printf("heap_init(%zu)\n", test_length);
+        fprintf(stderr, "heap_init(%zu)\n", test_length);
 
         void * const result = heap_init(test_length);
 
