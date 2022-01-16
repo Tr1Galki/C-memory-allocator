@@ -136,14 +136,18 @@ DEFINE_TEST(success) {
     block_init(block, (block_size) { .bytes = BUFFER_SIZE / 2 }, NULL);
 
     struct block_header * const next_block = (void*) (buffer + BUFFER_SIZE / 2);
-    block_init(next_block, (block_size) { .bytes = BUFFER_SIZE / 2 }, NULL);
+    block_init(next_block, (block_size) { .bytes = BUFFER_SIZE / 4 }, NULL);
+
+    // bad block address to check that merging is not acting with block->next->next
+    struct block_header * const next_next_block = (void*) 0x1488; // really bad address ._.
 
     block->next = next_block;
+    next_block->next = next_next_block;
 
     assert(try_merge_with_next(block));
 
-    assert(block->next == NULL);
-    assert(block->capacity.bytes == BUFFER_SIZE - offsetof(struct block_header, contents));
+    assert(block->next == next_next_block);
+    assert(block->capacity.bytes == 3 * BUFFER_SIZE / 4 - offsetof(struct block_header, contents));
     assert(block->is_free == true);
 }
 
