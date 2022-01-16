@@ -2,9 +2,8 @@
 #define _MEM_H_
 
 
-#include <stddef.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include <sys/mman.h>
