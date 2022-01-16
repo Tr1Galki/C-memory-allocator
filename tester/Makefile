@@ -1,5 +1,5 @@
 
-#CC=gcc
+# CC=gcc
 LD=$(CC)
 CFLAGS=-ggdb -Og -Isrc --std=c17 -Wall -pedantic -Wextra -Werror -DDEBUG
 LDFLAGS=

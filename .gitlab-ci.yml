@@ -13,4 +13,4 @@ linter:
 test:
   stage: test 
   script:
-    - cd tester; make
+    - cd tester; make CC=clang
