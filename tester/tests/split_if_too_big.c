@@ -7,6 +7,7 @@
 #define BUFFER_SIZE 512
 #define SMALL_BLOCK_SIZE (BLOCK_MIN_CAPACITY + offsetof(struct block_header, contents) / 2)
 
+
 // test when block is not free
 DEFINE_TEST(not_free) {
     uint8_t buffer[BUFFER_SIZE] = { 0 };

@@ -7,68 +7,10 @@
 #define BUFFER_SIZE 1024
 
 
-// +------------+
-// | good block |-->NULL
-// +------------+
-DEFINE_TEST(single_block_is_good) {
-    uint8_t buffer[BUFFER_SIZE] = { 0 };
-
-    block_init(buffer, (block_size) { .bytes = BUFFER_SIZE }, NULL);
-    struct block_header * const block = (void*) buffer;
-
-    const struct block_search_result bsr = find_good_or_last(block, BUFFER_SIZE / 2);
-
-    assert(bsr.type == BSR_FOUND_GOOD_BLOCK);
-    assert(bsr.block == block);
-
-    assert(block->next == NULL);
-    assert(block->capacity.bytes == BUFFER_SIZE - offsetof(struct block_header, contents));
-    assert(block->is_free == true);
-}
-
-// +-------------+
-// | dirty block |-->NULL
-// +-------------+
-DEFINE_TEST(single_block_is_dirty) {
-    uint8_t buffer[BUFFER_SIZE] = { 0 };
-
-    block_init(buffer, (block_size) { .bytes = BUFFER_SIZE }, NULL);
-    struct block_header * const block = (void*) buffer;
-    block->is_free = false;
-
-    const struct block_search_result bsr = find_good_or_last(block, BUFFER_SIZE / 2);
-
-    assert(bsr.type == BSR_REACHED_END_NOT_FOUND);
-    assert(bsr.block == block);
-
-    assert(block->next == NULL);
-    assert(block->capacity.bytes == BUFFER_SIZE - offsetof(struct block_header, contents));
-    assert(block->is_free == false);
-}
-
-// +-------------+
-// | small block |-->NULL
-// +-------------+
-DEFINE_TEST(single_block_is_small) {
-    uint8_t buffer[BUFFER_SIZE] = { 0 };
-
-    block_init(buffer, (block_size) { .bytes = BUFFER_SIZE / 4 }, NULL);
-    struct block_header * const block = (void*) buffer;
-
-    const struct block_search_result bsr = find_good_or_last(block, BUFFER_SIZE / 2);
-
-    assert(bsr.type == BSR_REACHED_END_NOT_FOUND);
-    assert(bsr.block == block);
-
-    assert(block->next == NULL);
-    assert(block->capacity.bytes == BUFFER_SIZE / 4 - offsetof(struct block_header, contents));
-    assert(block->is_free == true);
-}
-
 // +-------------+   +-------------+   +-+                      +-+   +-------------+
 // | small block |-->| dirty block |-->| |->...small blocks...->| |-->| dirty block |-->...
 // +-------------+   +-------------+   +-+                      +-+   +-------------+
-DEFINE_TEST(multiple_blocks_fail) {
+DEFINE_TEST(fail) {
     uint8_t buffer[BUFFER_SIZE] = { 0 };
 
     struct block_header * const block1 = (void*) (buffer + 0 * BUFFER_SIZE / 8);
@@ -92,7 +34,7 @@ DEFINE_TEST(multiple_blocks_fail) {
     block2->is_free = false;
     block7->is_free = false;
 
-    const struct block_search_result bsr = find_good_or_last(block1, BUFFER_SIZE / 2);
+    const struct block_search_result bsr = try_memalloc_existing(BUFFER_SIZE / 2, block1);
 
     assert(bsr.type == BSR_REACHED_END_NOT_FOUND);
     assert(bsr.block == block8);
@@ -121,7 +63,7 @@ DEFINE_TEST(multiple_blocks_fail) {
 // +-------------+   +-------------+   +-+                      +-+   +-------------+
 // | small block |-->| dirty block |-->| |->...small blocks...->| |-->| dirty block |
 // +-------------+   +-------------+   +-+                      +-+   +-------------+
-DEFINE_TEST(multiple_blocks_success) {
+DEFINE_TEST(split) {
     uint8_t buffer[BUFFER_SIZE] = { 0 };
 
     struct block_header * const block1 = (void*) (buffer + 0 * BUFFER_SIZE / 8);
@@ -145,10 +87,12 @@ DEFINE_TEST(multiple_blocks_success) {
     block2->is_free = false;
     block8->is_free = false;
 
-    const struct block_search_result bsr = find_good_or_last(block1, BUFFER_SIZE / 2);
+    const struct block_search_result bsr = try_memalloc_existing(BUFFER_SIZE / 2, block1);
 
     assert(bsr.type == BSR_FOUND_GOOD_BLOCK);
     assert(bsr.block == block3);
+
+    struct block_header * const new_block = (void*) (block3->contents + BUFFER_SIZE / 2);
 
     assert(block1->next == block2);
     assert(block1->capacity.bytes == BUFFER_SIZE / 8 - offsetof(struct block_header, contents));
@@ -158,28 +102,21 @@ DEFINE_TEST(multiple_blocks_success) {
     assert(block2->capacity.bytes == BUFFER_SIZE / 8 - offsetof(struct block_header, contents));
     assert(block2->is_free == false);
 
-    assert(block3->next == block8);
-    assert(block3->capacity.bytes == 5 * BUFFER_SIZE / 8 - offsetof(struct block_header, contents));
-    assert(block3->is_free == true);
+    assert(block3->next == new_block);
+    assert(block3->capacity.bytes == BUFFER_SIZE / 2);
+    assert(block3->is_free == false);
+
+    assert(new_block->next == block8);
+    assert(new_block->capacity.bytes == BUFFER_SIZE / 8 - 2 * offsetof(struct block_header, contents));
+    assert(new_block->is_free == true);
 
     assert(block8->next == NULL);
     assert(block8->capacity.bytes == BUFFER_SIZE / 8 - offsetof(struct block_header, contents));
     assert(block8->is_free == false);
 }
 
-DEFINE_TEST_GROUP(single_block) {
-    TEST_IN_GROUP(single_block_is_good),
-    TEST_IN_GROUP(single_block_is_dirty),
-    TEST_IN_GROUP(single_block_is_small),
-};
-
-DEFINE_TEST_GROUP(multiple_blocks) {
-    TEST_IN_GROUP(multiple_blocks_fail),
-    TEST_IN_GROUP(multiple_blocks_success),
-};
-
 int main() {
-    RUN_TEST_GROUP(single_block);
-    RUN_TEST_GROUP(multiple_blocks);
+    RUN_SINGLE_TEST(fail);
+    RUN_SINGLE_TEST(split);
     return 0;
 }
