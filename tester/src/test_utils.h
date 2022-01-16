@@ -51,7 +51,7 @@ inline void base_mmap_checks(void * addr, size_t length, int prot, int flags, in
     assert((flags | MAP_FIXED)
         || (flags | MAP_FIXED_NOREPLACE)
         || (flags & (~(MAP_PRIVATE | MAP_ANONYMOUS))) == 0);
-    assert(fd == 0);
+    assert(fd == -1);
     assert(offset == 0);
 }
 

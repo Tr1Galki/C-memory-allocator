@@ -34,7 +34,7 @@ extern inline bool region_is_invalid( const struct region* r );
 
 
 static void* map_pages(void const* addr, size_t length, int additional_flags) {
-  return mmap( (void*) addr, length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | additional_flags , 0, 0 );
+  return mmap( (void*) addr, length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | additional_flags , -1, 0 );
 }
 
 /*  аллоцировать регион памяти и инициализировать его блоком */
