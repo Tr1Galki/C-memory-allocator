@@ -1,7 +1,7 @@
 
 # CC=gcc
 LD=$(CC)
-CFLAGS=-ggdb -Og -Isrc --std=c17 -Wall -pedantic -Wextra -Werror -DDEBUG
+CFLAGS=-ggdb -O0 -Isrc --std=c17 -Wall -pedantic -Wextra -Werror -DDEBUG
 LDFLAGS=
 
 TARGETDIR=target
