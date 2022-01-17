@@ -45,14 +45,14 @@ inline void run_test_group(const char * name, const test_in_group * tests, size_
 inline void base_mmap_checks(void * addr, size_t length, int prot, int flags, int fd, off_t offset) {
     (void) addr;
 
-    assert(length > 0);
+    assert(length > 0); // from man
     assert(prot == (PROT_READ | PROT_WRITE));
     assert(flags & (MAP_PRIVATE | MAP_ANONYMOUS));
     assert((flags | MAP_FIXED)
         || (flags | MAP_FIXED_NOREPLACE)
         || (flags & (~(MAP_PRIVATE | MAP_ANONYMOUS))) == 0);
-    assert(fd == -1);
-    assert(offset == 0);
+    assert(fd == -1); // from man
+    assert(offset == 0); // from man
 }
 
 void print_mmap_call(FILE * output, void * addr, size_t length, int prot, int flags, int fd, off_t offset);
