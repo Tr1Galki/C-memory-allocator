@@ -1,7 +1,11 @@
+
+CC=gcc
 CFLAGS=--std=c17 -Wall -pedantic -Isrc/ -ggdb -Wextra -Werror -DDEBUG
+
 BUILDDIR=build
 SRCDIR=src
-CC=gcc
+
+.PHONY: all clean test
 
 all: $(BUILDDIR)/mem.o $(BUILDDIR)/util.o $(BUILDDIR)/mem_debug.o
 	$(CC) -o $(BUILDDIR)/main $^
@@ -21,3 +25,5 @@ $(BUILDDIR)/util.o: $(SRCDIR)/util.c build
 clean:
 	rm -rf $(BUILDDIR)
 
+test:
+	@+cd tester; make CC=$(CC)
