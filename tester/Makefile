@@ -9,9 +9,12 @@ BUILDDIR=build
 TESTSDIR=tests
 COMMON_SRCDIR=src
 SOLUTION_SRCDIR=../src
+SOLUTION_INCDIR=../src # change it if you has another include directory
+
+CFLAGS += -I$(SOLUTION_INCDIR)
 
 SOLUTION_SOURCES=$(shell find $(SOLUTION_SRCDIR) -type f -name '*.c' 2>/dev/null)
-SOLUTION_HEADERS=$(shell find $(SOLUTION_SRCDIR) -type f -name '*.h' 2>/dev/null)
+SOLUTION_HEADERS=$(shell find $(SOLUTION_INCDIR) -type f -name '*.h' 2>/dev/null)
 SOLUTION=$(SOLUTION_SOURCES) $(SOLUTION_HEADERS)
 
 COMMON_SOURCES=$(shell find $(COMMON_SRCDIR) -type f -name '*.c' 2>/dev/null)
