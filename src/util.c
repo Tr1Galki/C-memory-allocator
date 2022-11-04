@@ -7,7 +7,7 @@
 _Noreturn void err( const char* msg, ... ) {
   va_list args;
   va_start (args, msg);
-  vfprintf(stderr, msg, args);
+  vfprintf(stderr, msg, args); // NOLINT 
   va_end (args);
   abort();
 }
