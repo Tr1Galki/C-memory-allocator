@@ -1,11 +1,6 @@
-#define TEST_SMART_MMAP
-
 #include "test.h"
 
-#include <assert.h>
-
 #define BUFFER_SIZE 512
-
 
 // test working with null argument
 DEFINE_TEST(null) {

@@ -9,16 +9,15 @@ static const size_t corner_cases[] = { 0, 10, 24, 24 + offsetof(struct block_hea
 static size_t test_length = 0;
 static int mmap_counter = 0;
 
-DEFINE_MMAP_IMPL(fail) {
-    base_mmap_checks(addr, length, prot, flags, fd, offset);
+DEFINE_MAP_PAGES_IMPL(fail) {
     assert(addr == HEAP_START && length == region_actual_size(test_length + offsetof(struct block_header, contents)));
     ++mmap_counter;
-    return MAP_FAILED;
+    return MAP_PAGES_FAILURE;
 }
 
 // test when mmap failed
 DEFINE_TEST(fail) {
-    current_mmap_impl = MMAP_IMPL(fail);
+    USE_MAP_PAGES_IMPL(fail);
 
     for (size_t i = 0; i < sizeof(corner_cases) / sizeof(*corner_cases); ++i) {
         test_length = corner_cases[i];
@@ -33,16 +32,15 @@ DEFINE_TEST(fail) {
 
 static void * mmap_result = NULL;
 
-DEFINE_MMAP_IMPL(success) {
-    base_mmap_checks(addr, length, prot, flags, fd, offset);
+DEFINE_MAP_PAGES_IMPL(success) {
     assert(addr == HEAP_START && length == region_actual_size(test_length + offsetof(struct block_header, contents)));
     ++mmap_counter;
-    return (mmap_result = mmap(addr, length, prot, flags, fd, offset));
+    return (mmap_result = platform_map_pages(addr, length, location));
 }
 
 // test when mmap success
 DEFINE_TEST(success) {
-    current_mmap_impl = MMAP_IMPL(success);
+    USE_MAP_PAGES_IMPL(success);
 
     for (size_t i = 0; i < sizeof(corner_cases) / sizeof(*corner_cases); ++i) {
         test_length = corner_cases[i];
@@ -55,7 +53,7 @@ DEFINE_TEST(success) {
         assert(result == mmap_result);
         assert(mmap_counter == 1);
 
-        munmap(result, region_actual_size(test_length + offsetof(struct block_header, contents)));
+        unmap_pages(result, region_actual_size(test_length + offsetof(struct block_header, contents)));
     }
 }
 

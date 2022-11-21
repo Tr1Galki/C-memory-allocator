@@ -1,11 +1,6 @@
-#define TEST_SMART_MMAP
-
 #include "test.h"
 
-#include <assert.h>
-
 #define BUFFER_SIZE 1024
-
 
 // test memalloc existing with big query
 // +-------------+   +-------------+   +-+                      +-+   +-------------+
@@ -116,14 +111,12 @@ static uint8_t buffer[BUFFER_SIZE] = { 0 };
 static int test_mmap_counter = 0;
 static size_t mmap_length = REGION_MIN_SIZE * 2;
 
-DEFINE_MMAP_IMPL(mmap_failed) {
-    base_mmap_checks(addr, length, prot, flags, fd, offset);
-
+DEFINE_MAP_PAGES_IMPL(mmap_failed) {
     assert(addr == buffer + BUFFER_SIZE);
     assert(length == mmap_length);
 
     ++test_mmap_counter;
-    return MAP_FAILED;
+    return MAP_PAGES_FAILURE;
 }
 
 // test grow heap fail with big query (bigger than 2 pages)
@@ -131,7 +124,7 @@ DEFINE_MMAP_IMPL(mmap_failed) {
 // | small block |-->| dirty block |-->| |->...small blocks...->| |-->| dirty block |-->| small block |
 // +-------------+   +-------------+   +-+                      +-+   +-------------+   +-------------+
 DEFINE_TEST(grow_heap_fail_big_query) {
-    current_mmap_impl = MMAP_IMPL(mmap_failed);
+    USE_MAP_PAGES_IMPL(mmap_failed);
 
     struct block_header * const block1 = (void*) (buffer + 0 * BUFFER_SIZE / 8);
     struct block_header * const block2 = (void*) (buffer + 1 * BUFFER_SIZE / 8);
@@ -154,7 +147,7 @@ DEFINE_TEST(grow_heap_fail_big_query) {
     block2->is_free = false;
     block7->is_free = false;
 
-    mmap_length = REGION_MIN_SIZE + getpagesize();
+    mmap_length = REGION_MIN_SIZE + page_size();
     test_mmap_counter = 0;
 
     struct block_header * const result = memalloc(REGION_MIN_SIZE, block1);
@@ -188,7 +181,7 @@ DEFINE_TEST(grow_heap_fail_big_query) {
 // | dirty block |
 // +-------------+
 DEFINE_TEST(grow_heap_fail_small_query) {
-    current_mmap_impl = MMAP_IMPL(mmap_failed);
+    USE_MAP_PAGES_IMPL(mmap_failed);
 
     struct block_header * const block = (void*) buffer;
     block_init(block, (block_size) { .bytes = BUFFER_SIZE }, NULL);
@@ -209,15 +202,13 @@ DEFINE_TEST(grow_heap_fail_small_query) {
 
 static uint8_t mmap_buffer[REGION_MIN_SIZE] = { 0 };
 
-DEFINE_MMAP_IMPL(mmap_fixed_failed) {
-    base_mmap_checks(addr, length, prot, flags, fd, offset);
-
+DEFINE_MAP_PAGES_IMPL(mmap_fixed_failed) {
     assert(length == REGION_MIN_SIZE);
 
     ++test_mmap_counter;
     if (test_mmap_counter == 1) {
         assert(addr == buffer + BUFFER_SIZE);
-        return MAP_FAILED;
+        return MAP_PAGES_FAILURE;
     }
 
     return mmap_buffer;
@@ -228,7 +219,7 @@ DEFINE_MMAP_IMPL(mmap_fixed_failed) {
 // | small block |-->| dirty block |-->| |->...small blocks...->| |-->| dirty block |-->| small block |
 // +-------------+   +-------------+   +-+                      +-+   +-------------+   +-------------+
 DEFINE_TEST(grow_heap_success_big_query) {
-    current_mmap_impl = MMAP_IMPL(mmap_fixed_failed);
+    USE_MAP_PAGES_IMPL(mmap_fixed_failed);
 
     struct block_header * const block1 = (void*) (buffer + 0 * BUFFER_SIZE / 8);
     struct block_header * const block2 = (void*) (buffer + 1 * BUFFER_SIZE / 8);
@@ -293,7 +284,7 @@ DEFINE_TEST(grow_heap_success_big_query) {
 // | dirty block |
 // +-------------+
 DEFINE_TEST(grow_heap_success_small_query) {
-    current_mmap_impl = MMAP_IMPL(mmap_fixed_failed);
+    USE_MAP_PAGES_IMPL(mmap_fixed_failed);
 
     struct block_header * const block = (void*) buffer;
     block_init(block, (block_size) { .bytes = BUFFER_SIZE }, NULL);

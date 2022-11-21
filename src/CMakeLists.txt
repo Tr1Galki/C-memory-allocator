@@ -2,6 +2,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL GNU OR CMAKE_C_COMPILER_ID MATCHES Clang)
     add_compile_options(-Wall -Werror -Wno-unused -ggdb)
 elseif(MSVC)
     add_compile_options(/W4 /WX)
+    add_compile_options(/wd4200) # disable "nonstandard extension used : zero-sized array in struct/union" error in mem_internals.h
 endif()
 
 find_program(CLANG_TIDY clang-tidy)
@@ -17,14 +18,15 @@ if(CLANG_TIDY)
     )
 endif()
 
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS *.c *.h)
+file(GLOB sources CONFIGURE_DEPENDS *.c *.h)
 list(FILTER sources EXCLUDE REGEX main.c)
 
 add_library(memalloc STATIC ${sources})
 target_include_directories(memalloc PUBLIC .)
+target_link_libraries(memalloc PUBLIC platform_page_routines)
 
-if(EXISTS main.c)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/main.c)
     add_executable(memalloc_exe main.c)
-    target_link_libraries(memalloc_exe PRIVATE memalloc)
+    target_link_libraries(memalloc_exe PUBLIC memalloc page_routines)
     set_target_properties(memalloc_exe PROPERTIES OUTPUT_NAME memalloc)
 endif()

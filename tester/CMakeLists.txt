@@ -1,14 +1,5 @@
-file(GLOB_RECURSE common_sources CONFIGURE_DEPENDS
-    src/*.c
-    src/*.h
-)
-
-add_library(test_stubs OBJECT ${common_sources})
-target_include_directories(test_stubs PUBLIC src)
-target_link_libraries(test_stubs PUBLIC memalloc)
-
 file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS
-    tests/*.c
+    *.c
 )
 
 foreach(test_source IN LISTS test_sources)
@@ -18,7 +9,7 @@ foreach(test_source IN LISTS test_sources)
     list(APPEND test_targets test_${name})
 
     add_executable(test_${name} ${test_source})
-    target_link_libraries(test_${name} PRIVATE test_stubs)
+    target_link_libraries(test_${name} PRIVATE memalloc page_routines_test)
     add_test(NAME test_${name} COMMAND test_${name})
 endforeach()
 

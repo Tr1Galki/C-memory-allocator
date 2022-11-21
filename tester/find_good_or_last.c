@@ -1,11 +1,6 @@
-#define TEST_SMART_MMAP
-
 #include "test.h"
 
-#include <assert.h>
-
 #define BUFFER_SIZE 1024
-
 
 // +------------+
 // | good block |-->NULL

@@ -1,12 +1,11 @@
 #ifndef _MEM_H_
 #define _MEM_H_
 
+#include "../page_routines/page_routines.h"
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-
-#include <sys/mman.h>
 
 #define HEAP_START ((void*)0x04040000)
 
