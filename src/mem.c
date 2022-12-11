@@ -32,7 +32,7 @@ static void block_init(void *restrict addr, block_size block_sz, void *restrict 
     };
 }
 
-static size_t region_actual_size(size_t query) { return size_max(round_pages(query), REGION_MIN_SIZE); }
+size_t region_actual_size(size_t query) { return size_max(round_pages(query), REGION_MIN_SIZE); }
 
 extern inline bool region_is_invalid(const struct region *r);
 

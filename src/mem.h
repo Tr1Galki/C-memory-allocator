@@ -22,4 +22,6 @@ void debug_struct_info(FILE *f, void const *address);
 
 void debug_heap(FILE *f, void const *ptr);
 
+size_t region_actual_size(size_t query);
+
 #endif
