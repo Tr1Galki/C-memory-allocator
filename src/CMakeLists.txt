@@ -1,8 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
 
-project(memory-allocator LANGUAGES C)
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(CMAKE_C_COMPILER_ID STREQUAL GNU OR CMAKE_C_COMPILER_ID MATCHES Clang)
     add_compile_options(-Wall -Werror -Wno-unused -ggdb)
