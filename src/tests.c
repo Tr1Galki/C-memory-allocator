@@ -14,7 +14,9 @@ static bool test_allocate() {
     bool test_completed = false;
     if (allocated_memory) {
         // If no segmentation fault, ok
-        for (size_t i = 0; i < HEAP_SIZE; i++) allocated_memory[i] = i;
+        for (size_t i = 0; i < HEAP_SIZE; i++) {
+            allocated_memory[i] = i;
+        }
 
         test_completed = true;
     }
@@ -23,6 +25,7 @@ static bool test_allocate() {
     return test_completed;
 }
 
-bool test_run() {
-    return test_allocate();
+bool tests_run() {
+    bool ret = test_allocate();
+    return ret;
 }
