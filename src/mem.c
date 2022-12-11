@@ -5,18 +5,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "mem_internals.h"
 #include "mem.h"
+#include "mem_internals.h"
 #include "util.h"
-#include "../tester/src/test.h"
 
-void debug_block(struct block_header *b, const char *fmt, ...);
-
-void debug(const char *fmt, ...);
-
-extern inline block_size size_from_capacity(block_capacity cap);
-
-extern inline block_capacity capacity_from_size(block_size sz);
+//void debug_block(struct block_header *b, const char *fmt, ...);
+//
+//void debug(const char *fmt, ...);
 
 static bool block_is_big_enough(size_t query, struct block_header *block) { return block->capacity.bytes >= query; }
 
@@ -33,8 +28,6 @@ static void block_init(void *restrict addr, block_size block_sz, void *restrict 
 }
 
 size_t region_actual_size(size_t query) { return size_max(round_pages(query), REGION_MIN_SIZE); }
-
-extern inline bool region_is_invalid(const struct region *r);
 
 
 static void *map_pages(void const *addr, size_t length, int additional_flags) {
