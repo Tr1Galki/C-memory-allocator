@@ -10,11 +10,11 @@ if(CLANG_TIDY)
     file(STRINGS ${PROJECT_SOURCE_DIR}/clang-tidy-checks.txt clang_tidy_checks)
     list(JOIN clang_tidy_checks "," clang_tidy_checks_str)
     set(CMAKE_C_CLANG_TIDY
-        ${CLANG_TIDY}
-        -header-filter=${CMAKE_SOURCE_DIR}
-        -checks=${clang_tidy_checks_str}
-        -warnings-as-errors=*
-    )
+            ${CLANG_TIDY}
+            -header-filter=${CMAKE_SOURCE_DIR}
+            -checks=${clang_tidy_checks_str}
+            -warnings-as-errors=*
+            )
 endif()
 
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS *.c *.h)
