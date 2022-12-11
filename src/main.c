@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "tests.h"
+#include <stdio.h>
 
 int main() {
     if (tests_run()) {
