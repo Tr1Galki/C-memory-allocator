@@ -1,3 +1,9 @@
+cmake_minimum_required(VERSION 3.12)
+
+project(memory-allocator LANGUAGES C)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if(CMAKE_C_COMPILER_ID STREQUAL GNU OR CMAKE_C_COMPILER_ID MATCHES Clang)
     add_compile_options(-Wall -Werror -Wno-unused -ggdb)
 elseif(MSVC)
@@ -6,7 +12,7 @@ endif()
 
 find_program(CLANG_TIDY clang-tidy)
 message(STATUS "Clang-tidy: ${CLANG_TIDY}")
-if(CLANG_TIDY)
+if(CLANG_TIDY AND CMAKE_C_COMPILER_ID MATCHES Clang)
     file(STRINGS ${PROJECT_SOURCE_DIR}/clang-tidy-checks.txt clang_tidy_checks)
     list(JOIN clang_tidy_checks "," clang_tidy_checks_str)
     set(CMAKE_C_CLANG_TIDY

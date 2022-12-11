@@ -9,9 +9,9 @@
 #include "mem_internals.h"
 #include "util.h"
 
-//void debug_block(struct block_header *b, const char *fmt, ...);
-//
-//void debug(const char *fmt, ...);
+void debug_block(struct block_header *b, const char *fmt, ...);
+
+void debug(const char *fmt, ...);
 
 static bool block_is_big_enough(size_t query, struct block_header *block) { return block->capacity.bytes >= query; }
 
@@ -54,12 +54,11 @@ static struct region alloc_region(void const *addr, size_t query) {
     size_t actual_size = region_actual_size(get_size_by_query(query));
 
     void *region_addr = map_pages(addr, actual_size, MAP_FIXED_NOREPLACE);
-    if (region_addr == MAP_FAILED)
+    if (region_addr == MAP_FAILED) {
         region_addr = map_pages(addr, query, 0);
+    }
 
-    //TODO: добавить проверки на всякие MAP_FAILED и т.п.
-
-    struct region temp_region = region_init(region_addr, actual_size, false);//TODO: что вместо false написать???
+    struct region temp_region = region_init(region_addr, actual_size, false);
 
     block_init(region_addr, (block_size) {.bytes = actual_size}, NULL);
     return temp_region;
