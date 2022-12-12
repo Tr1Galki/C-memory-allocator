@@ -19,6 +19,17 @@ void debug_struct_info(FILE *f,
     fprintf(f, "\n");
 }
 
+inline block_size size_from_capacity(block_capacity cap) {
+    return (block_size) {cap.bytes + offsetof(struct block_header, contents)};
+}
+
+inline block_capacity capacity_from_size(block_size sz) {
+    return (block_capacity) {sz.bytes - offsetof(struct block_header, contents)};
+}
+
+inline bool region_is_invalid(const struct region *r) { return r->addr == NULL; }
+
+
 
 void debug_heap(FILE *f, void const *ptr) {
     fprintf(f, " --- Heap ---\n");
@@ -50,6 +61,6 @@ void debug(const char *fmt, ...) {
     va_end (args);
 
 #else
-    (void) fmt;
+     (void) fmt;
 #endif
 }

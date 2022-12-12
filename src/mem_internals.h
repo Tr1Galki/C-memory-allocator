@@ -14,7 +14,7 @@ struct region {
 };
 static const struct region REGION_INVALID = {0};
 
-inline bool region_is_invalid(const struct region *r) { return r->addr == NULL; }
+inline bool region_is_invalid(const struct region *r);
 
 typedef struct {
     size_t bytes;
@@ -30,12 +30,8 @@ struct block_header {
     uint8_t contents[];
 };
 
-inline block_size size_from_capacity(block_capacity cap) {
-    return (block_size) {cap.bytes + offsetof(struct block_header, contents)};
-}
+inline block_size size_from_capacity(block_capacity cap);
 
-inline block_capacity capacity_from_size(block_size sz) {
-    return (block_capacity) {sz.bytes - offsetof(struct block_header, contents)};
-}
+inline block_capacity capacity_from_size(block_size sz);
 
 #endif
