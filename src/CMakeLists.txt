@@ -7,7 +7,7 @@ endif()
 
 find_program(CLANG_TIDY clang-tidy)
 message(STATUS "Clang-tidy: ${CLANG_TIDY}")
-if(CLANG_TIDY AND CMAKE_C_COMPILER_ID MATCHES Clang)
+if(CLANG_TIDY)
     file(STRINGS ${PROJECT_SOURCE_DIR}/clang-tidy-checks.txt clang_tidy_checks)
     list(JOIN clang_tidy_checks "," clang_tidy_checks_str)
     set(CMAKE_C_CLANG_TIDY
