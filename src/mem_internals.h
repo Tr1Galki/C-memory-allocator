@@ -14,7 +14,7 @@ struct region {
 };
 static const struct region REGION_INVALID = {0};
 
-bool region_is_invalid(const struct region *r);
+__attribute__((weak)) bool region_is_invalid(const struct region *r);
 
 typedef struct {
     size_t bytes;
@@ -30,8 +30,8 @@ struct block_header {
     uint8_t contents[];
 };
 
-block_size size_from_capacity(block_capacity cap);
+__attribute__((weak)) block_size size_from_capacity(block_capacity cap);
 
-block_capacity capacity_from_size(block_size sz);
+__attribute__((weak)) block_capacity capacity_from_size(block_size sz);
 
 #endif
