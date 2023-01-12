@@ -11,7 +11,7 @@ static void print_heap(const void *heap, const char *string) {
     debug_heap(stdout, heap);
 }
 
-static void memory_free(void *allocated_memory) {
+static void memory_free(const void *heap, const void *allocated_memory) {
     _free(allocated_memory);
     munmap(heap, size_from_capacity((block_capacity) {.bytes = HEAP_SIZE}).bytes);
 }
@@ -34,7 +34,7 @@ static bool test_allocate_block() {
         return false;
     }
 
-    memory_free(allocated_memory);
+    memory_free(heap, allocated_memory);
     printf("test_allocate_block completed");
     return true;
 }
@@ -65,7 +65,7 @@ static bool test_allocate_two_blocks() {
         return false;
     }
 
-    memory_free(first_block);
+    memory_free(heap, first_block);
     printf("test_allocate_two_blocks completed");
     return true;
 }
@@ -112,7 +112,7 @@ static bool test_allocate_three_different_blocks() {
         return false;
     }
     
-    memory_free(first_block);
+    memory_free(heap, first_block);
     printf("test_allocate_two_blocks completed");
     return true;
 }
