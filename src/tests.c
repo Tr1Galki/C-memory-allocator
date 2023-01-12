@@ -11,7 +11,7 @@ static void print_heap(const void *heap, const char *string) {
     debug_heap(stdout, heap);
 }
 
-static void memory_free(const void *heap, void *allocated_memory) {
+static void memory_free(void *heap, void *allocated_memory) {
     _free(allocated_memory);
     munmap(heap, size_from_capacity((block_capacity) {.bytes = HEAP_SIZE}).bytes);
 }
