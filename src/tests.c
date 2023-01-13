@@ -7,7 +7,7 @@
 #define BLOCK_SIZE 256
 
 static void print_heap(const void *heap, const char *string) {
-    printf("%s:\n", string);
+    fprintf( stderr, "%s:\n", string);
     debug_heap(stdout, heap);
 }
 
