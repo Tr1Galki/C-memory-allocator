@@ -58,11 +58,7 @@ static struct region alloc_region(void const *addr, size_t query) {
 
     block_init(allocated_region.addr, (block_size) {.bytes = allocated_region.size}, NULL);
 
-    if (allocated_region.addr == addr) {
-        allocated_region.extends = true;
-    } else {
-        allocated_region.extends = false;
-    }
+    allocated_region.extends = allocated_region.addr == addr;
 
     return allocated_region;
 }
