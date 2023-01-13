@@ -81,7 +81,7 @@ void *heap_init(size_t initial) {
 /*  --- Разделение блоков (если найденный свободный блок слишком большой )--- */
 
 static bool block_splittable(struct block_header *restrict block, size_t query) {
-    return block->is_free &&
+    return block && block->is_free &&
            query + offsetof(struct block_header, contents) + BLOCK_MIN_CAPACITY <= block->capacity.bytes;
 }
 
